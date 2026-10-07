@@ -77,6 +77,33 @@ hex, Bearer tokens, JWTs, private keys), IPv4 addresses, and
 high-entropy opaque tokens. Two styles: full (`[REDACTED:email]`) or
 partial (everything but the last 4 characters masked).
 
+## FastAPI middleware
+
+If your tools sit behind a FastAPI backend, one middleware guards
+every response: JSON endpoints get validated and redacted before they
+leave the server, and SSE streams get validated frame by frame.
+
+```bash
+pip install "output-contracts[http]"
+```
+
+```python
+from output_contracts.middleware import OutputContractMiddleware
+
+app.add_middleware(
+    OutputContractMiddleware,
+    contracts={"/tools/search": contract},
+    on_violation="error",  # or "monitor" while you roll contracts out
+)
+```
+
+Valid responses go out redacted with `X-Output-Contracts-Valid: true`.
+Invalid ones fail closed: a 422 with structured errors, and the raw
+payload never leaves. Streaming tool events are redacted per frame;
+on a violation the stream emits a `contract-violation` event and stops.
+See [docs/middleware.md](docs/middleware.md) and
+[examples/fastapi_middleware_demo.py](examples/fastapi_middleware_demo.py).
+
 ## CLI
 
 ```bash
