@@ -87,5 +87,6 @@ output-contracts check --contract contract.json --input output.json  # CI: exit 
 ```
 
 Next: the full schema reference is in [contracts.md](contracts.md),
-detector details in [redaction.md](redaction.md), and the honest list
-of what this cannot do in [limitations.md](limitations.md).
+detector details in [redaction.md](redaction.md), the FastAPI middleware
+in [middleware.md](middleware.md), and the honest list of what this
+cannot do in [limitations.md](limitations.md).

@@ -9,7 +9,7 @@ from output_contracts.redact import redact_value, scan_and_redact
 from output_contracts.schema import ContractBuildError
 from output_contracts.validate import Contract, ContractViolation, ValidationReport
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "Contract",

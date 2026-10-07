@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "output-contracts"
-version = "0.1.0"
+version = "0.2.0"
 description = "Declare the JSON your agent tools must return: schema validation plus PII and secret redaction on structured tool outputs, before the model sees them. Zero dependencies."
 readme = "README.md"
 license = { text = "MIT" }
@@ -26,6 +26,7 @@ classifiers = [
 [project.optional-dependencies]
 test = ["pytest>=8"]
 lint = ["ruff>=0.4"]
+http = ["fastapi>=0.110", "httpx>=0.27"]
 
 [project.scripts]
 output-contracts = "output_contracts.cli:main"
