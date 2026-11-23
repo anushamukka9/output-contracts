@@ -7,6 +7,7 @@ import json
 import sys
 
 from output_contracts import __version__
+from output_contracts.diff import diff_contracts
 from output_contracts.redact import STYLES, scan_and_redact
 from output_contracts.validate import Contract
 
@@ -43,6 +44,16 @@ def cmd_check(args: argparse.Namespace) -> int:
     return 2
 
 
+def cmd_diff(args: argparse.Namespace) -> int:
+    """Compare two contracts. Exit 1 when a breaking change is found."""
+    diff = diff_contracts(_load_json(args.old), _load_json(args.new))
+    if args.format == "json":
+        print(json.dumps(diff.to_dict(), indent=2))
+    else:
+        print(diff.summary())
+    return 1 if diff.has_breaking else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="output-contracts",
@@ -67,6 +78,12 @@ def build_parser() -> argparse.ArgumentParser:
     p_check.add_argument("--input", required=True, help="tool output JSON file")
     p_check.add_argument("--style", choices=list(STYLES), default="full")
     p_check.set_defaults(func=cmd_check)
+
+    p_diff = sub.add_parser("diff", help="compare two contracts, exit 1 on breaking changes")
+    p_diff.add_argument("--old", required=True, help="old contract JSON file")
+    p_diff.add_argument("--new", required=True, help="new contract JSON file")
+    p_diff.add_argument("--format", choices=["text", "json"], default="text")
+    p_diff.set_defaults(func=cmd_diff)
 
     return parser
 

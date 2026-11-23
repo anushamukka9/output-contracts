@@ -104,12 +104,38 @@ on a violation the stream emits a `contract-violation` event and stops.
 See [docs/middleware.md](docs/middleware.md) and
 [examples/fastapi_middleware_demo.py](examples/fastapi_middleware_demo.py).
 
+## Comparing contract versions
+
+Contracts change, and not every change is safe. The diff compares two
+versions and flags the breaking ones: removed fields, new required
+fields, tightened types and bounds, enum values that went away. Safe
+changes are reported too, marked as safe, so a reviewer sees the whole
+picture in one pass.
+
+```bash
+output-contracts diff --old contract-v1.json --new contract-v2.json
+# BREAKING score: field 'score' was removed; consumers reading it will find nothing
+# exit code 1 when a breaking change is found, so CI can gate on it
+```
+
+```python
+from output_contracts import diff_contracts
+
+diff = diff_contracts(v1, v2)  # raw dicts or Contract objects
+diff.has_breaking
+```
+
+See [docs/diff.md](docs/diff.md) for the full rule list and
+[examples/contract_diff.py](examples/contract_diff.py) for a runnable
+walkthrough.
+
 ## CLI
 
 ```bash
 output-contracts validate --contract contract.json --input output.json
 output-contracts redact --input output.json --style partial
 output-contracts check --contract contract.json --input output.json   # CI mode: exit 2 on invalid
+output-contracts diff --old v1.json --new v2.json                     # exit 1 on breaking changes
 ```
 
 ## Benchmarks
